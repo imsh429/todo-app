@@ -1,5 +1,5 @@
 <template>
-  <div class="home-page">
+  <div class="calendar-page">
     <!-- 배경 -->
     <div class="bg-decoration"></div>
 
@@ -17,7 +17,7 @@
 
           <!-- 네비게이션 메뉴 -->
           <nav class="nav-menu">
-            <router-link to="/" class="nav-item" active-class="active">
+            <router-link to="/" class="nav-item">
               <i class="pi pi-list"></i>
               <span>할일</span>
             </router-link>
@@ -52,70 +52,61 @@
         <!-- 헤더 -->
         <div class="content-header fade-in">
           <div>
-            <h1 class="page-title">오늘의 할일 ✨</h1>
-            <p class="page-subtitle">생산적인 하루를 만들어가세요</p>
+            <h1 class="page-title">캘린더 📅</h1>
+            <p class="page-subtitle">일정을 한눈에 확인하세요</p>
           </div>
-          <button class="add-btn" title="할일 추가">
-            <i class="pi pi-plus"></i>
-            <span>새 할일</span>
-          </button>
-        </div>
-
-        <!-- 통계 카드 -->
-        <div class="stats-grid slide-in">
-          <div class="stat-card glass">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-              <i class="pi pi-list"></i>
-            </div>
-            <div class="stat-info">
-              <p class="stat-label">전체</p>
-              <p class="stat-value">0</p>
-            </div>
-          </div>
-
-          <div class="stat-card glass">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-              <i class="pi pi-clock"></i>
-            </div>
-            <div class="stat-info">
-              <p class="stat-label">진행중</p>
-              <p class="stat-value">0</p>
-            </div>
-          </div>
-
-          <div class="stat-card glass">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-              <i class="pi pi-check"></i>
-            </div>
-            <div class="stat-info">
-              <p class="stat-label">완료</p>
-              <p class="stat-value">0</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- 할일 리스트 영역 -->
-        <div class="todo-section fade-in" style="animation-delay: 0.2s;">
-          <div class="section-header">
-            <h2 class="section-title">할일 목록</h2>
-            <div class="filter-tabs">
-              <button class="tab-btn active">전체</button>
-              <button class="tab-btn">진행중</button>
-              <button class="tab-btn">완료</button>
-            </div>
-          </div>
-
-          <!-- Empty State -->
-          <div class="empty-state">
-            <div class="empty-icon">
-              <i class="pi pi-inbox"></i>
-            </div>
-            <h3>아직 할일이 없습니다</h3>
-            <p>새로운 할일을 추가하여 시작해보세요!</p>
-            <button class="empty-btn">
-              <i class="pi pi-plus"></i>
-              첫 번째 할일 만들기
+          <div class="header-actions">
+            <button class="view-btn active">
+              <i class="pi pi-th-large"></i>
+              <span>월</span>
             </button>
+            <button class="view-btn">
+              <i class="pi pi-bars"></i>
+              <span>주</span>
+            </button>
+            <button class="view-btn">
+              <i class="pi pi-list"></i>
+              <span>일</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 캘린더 영역 -->
+        <div class="calendar-section slide-in">
+          <div class="calendar-card">
+            <div class="calendar-placeholder">
+              <div class="placeholder-icon">
+                <i class="pi pi-calendar"></i>
+              </div>
+              <h3>캘린더 기능</h3>
+              <p>Part 7에서 FullCalendar가 통합됩니다</p>
+              <div class="feature-preview">
+                <div class="preview-item">
+                  <i class="pi pi-calendar-plus"></i>
+                  <span>일정 추가</span>
+                </div>
+                <div class="preview-item">
+                  <i class="pi pi-bell"></i>
+                  <span>알림 설정</span>
+                </div>
+                <div class="preview-item">
+                  <i class="pi pi-sync"></i>
+                  <span>실시간 동기화</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 오늘의 일정 -->
+          <div class="today-schedule">
+            <div class="schedule-header">
+              <h3>오늘의 일정</h3>
+              <span class="date-badge">{{ currentDate }}</span>
+            </div>
+            <div class="empty-schedule">
+              <i class="pi pi-check-circle"></i>
+              <p>오늘 예정된 일정이 없습니다</p>
+            </div>
           </div>
         </div>
       </div>
@@ -124,9 +115,20 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
+
+const currentDate = computed(() => {
+  const today = new Date()
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long'
+  }).format(today)
+})
 
 const handleLogout = async () => {
   if (confirm('로그아웃 하시겠습니까?')) {
@@ -136,12 +138,12 @@ const handleLogout = async () => {
 </script>
 
 <style scoped>
-.home-page {
+.calendar-page {
   min-height: 100vh;
   position: relative;
 }
 
-/* 네비게이션 헤더 */
+/* 네비게이션 헤더 - HomeView와 동일 */
 .nav-header {
   position: sticky;
   top: 0;
@@ -158,7 +160,6 @@ const handleLogout = async () => {
   gap: 24px;
 }
 
-/* 로고 */
 .logo {
   display: flex;
   align-items: center;
@@ -188,7 +189,6 @@ const handleLogout = async () => {
   letter-spacing: -0.5px;
 }
 
-/* 네비게이션 메뉴 */
 .nav-menu {
   display: flex;
   gap: 8px;
@@ -223,7 +223,6 @@ const handleLogout = async () => {
   font-size: 18px;
 }
 
-/* 사용자 섹션 */
 .user-section {
   display: flex;
   align-items: center;
@@ -278,7 +277,6 @@ const handleLogout = async () => {
   padding: 40px 0;
 }
 
-/* 컨텐츠 헤더 */
 .content-header {
   display: flex;
   align-items: center;
@@ -299,178 +297,175 @@ const handleLogout = async () => {
   font-size: 1.1rem;
 }
 
-.add-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 24px;
-  background: white;
-  border: none;
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 15px;
-  color: #667eea;
-  cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.add-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
-}
-
-/* 통계 그리드 */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 32px;
-}
-
-.stat-card {
-  padding: 24px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  transition: all 0.3s;
-}
-
-.stat-card:hover {
-  transform: translateY(-4px);
-}
-
-.stat-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 24px;
-}
-
-.stat-info {
-  flex: 1;
-}
-
-.stat-label {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.stat-value {
-  color: white;
-  font-size: 2rem;
-  font-weight: 700;
-}
-
-/* 할일 섹션 */
-.todo-section {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
-  padding: 32px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-}
-
-.section-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a1a2e;
-}
-
-.filter-tabs {
+.header-actions {
   display: flex;
   gap: 8px;
-  background: #f3f4f6;
+  background: rgba(255, 255, 255, 0.1);
   padding: 4px;
-  border-radius: 12px;
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
 }
 
-.tab-btn {
-  padding: 8px 16px;
+.view-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
   border: none;
   background: transparent;
   border-radius: 10px;
+  color: rgba(255, 255, 255, 0.7);
   font-weight: 600;
   font-size: 14px;
-  color: #6b7280;
   cursor: pointer;
   transition: all 0.3s;
 }
 
-.tab-btn.active {
+.view-btn.active {
   background: white;
   color: #667eea;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* Empty State */
-.empty-state {
+.view-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+/* 캘린더 섹션 */
+.calendar-section {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 24px;
+}
+
+.calendar-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  min-height: 600px;
+}
+
+/* Placeholder */
+.calendar-placeholder {
   text-align: center;
   padding: 80px 20px;
 }
 
-.empty-icon {
+.placeholder-icon {
   width: 120px;
   height: 120px;
   margin: 0 auto 24px;
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: float 3s ease-in-out infinite;
 }
 
-.empty-icon i {
+.placeholder-icon i {
   font-size: 56px;
-  color: #9ca3af;
+  color: white;
 }
 
-.empty-state h3 {
+.calendar-placeholder h3 {
   font-size: 1.5rem;
   font-weight: 700;
   color: #1a1a2e;
   margin-bottom: 8px;
 }
 
-.empty-state p {
+.calendar-placeholder p {
   color: #6b7280;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
-.empty-btn {
-  display: inline-flex;
+.feature-preview {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 40px;
+}
+
+.preview-item {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 14px 28px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  border-radius: 14px;
-  color: white;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+  gap: 12px;
 }
 
-.empty-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+.preview-item i {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+}
+
+.preview-item span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+/* 오늘의 일정 */
+.today-schedule {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.schedule-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.date-badge {
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.empty-schedule {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-schedule i {
+  font-size: 48px;
+  color: #43e97b;
+  margin-bottom: 16px;
+}
+
+.empty-schedule p {
+  color: #6b7280;
+  font-size: 14px;
 }
 
 /* 반응형 */
+@media (max-width: 1024px) {
+  .calendar-section {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .nav-content {
     flex-wrap: wrap;
@@ -494,17 +489,16 @@ const handleLogout = async () => {
     gap: 16px;
   }
 
-  .stats-grid {
-    grid-template-columns: 1fr;
+  .view-btn span {
+    display: none;
   }
 
-  .todo-section {
+  .calendar-card {
     padding: 24px;
   }
 
-  .section-header {
+  .feature-preview {
     flex-direction: column;
-    align-items: flex-start;
     gap: 16px;
   }
 }
