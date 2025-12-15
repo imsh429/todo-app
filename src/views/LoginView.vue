@@ -1,68 +1,117 @@
-<!-- src/views/LoginView.vue -->
 <template>
   <div class="login-container">
-    <div class="login-box">
-      <h1>TaskSync</h1>
-      <p>할 일과 일정을 효율적으로 관리하세요</p>
-      <button class="google-login-btn">
+    <div class="login-card">
+      <div class="login-header">
+        <i class="pi pi-check-circle" style="font-size: 3rem; color: #3B82F6;"></i>
+        <h1>TaskSync</h1>
+        <p>할일 관리 & 캘린더 앱</p>
+      </div>
+
+      <button
+        class="google-login-btn"
+        @click="handleGoogleLogin"
+        :disabled="loading"
+      >
         <i class="pi pi-google"></i>
-        Google로 로그인
+        <span>Google로 로그인</span>
       </button>
+
+      <p class="login-info">
+        웹과 모바일에서 실시간으로 동기화됩니다
+      </p>
     </div>
   </div>
 </template>
 
 <script setup>
-// Part 4에서 로그인 기능 구현 예정
+import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+const loading = ref(false)
+
+const handleGoogleLogin = async () => {
+  loading.value = true
+  const result = await authStore.signInWithGoogle()
+  if (!result.success) {
+    alert('로그인에 실패했습니다: ' + result.error)
+  }
+  loading.value = false
+}
 </script>
 
 <style scoped>
 .login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
 }
 
-.login-box {
+.login-card {
   background: white;
-  padding: 3rem;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   text-align: center;
   max-width: 400px;
+  width: 100%;
 }
 
-.login-box h1 {
-  color: #667eea;
-  margin-bottom: 0.5rem;
-  font-size: 2.5rem;
+.login-header {
+  margin-bottom: 30px;
 }
 
-.login-box p {
-  color: #666;
-  margin-bottom: 2rem;
+.login-header h1 {
+  font-size: 2rem;
+  color: #1F2937;
+  margin: 15px 0 10px;
+}
+
+.login-header p {
+  color: #6B7280;
+  font-size: 0.95rem;
 }
 
 .google-login-btn {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  width: 100%;
-  padding: 1rem;
-  background: #4285f4;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
+  gap: 10px;
+  padding: 14px 24px;
+  background: white;
+  border: 2px solid #E5E7EB;
+  border-radius: 10px;
+  font-size: 16px;
   font-weight: 600;
+  color: #1F2937;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.2s;
 }
 
 .google-login-btn:hover {
-  background: #357ae8;
+  background: #F9FAFB;
+  border-color: #3B82F6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.google-login-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.google-login-btn i {
+  font-size: 20px;
+  color: #EA4335;
+}
+
+.login-info {
+  margin-top: 20px;
+  color: #9CA3AF;
+  font-size: 0.85rem;
 }
 </style>
