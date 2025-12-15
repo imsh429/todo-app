@@ -5,7 +5,7 @@ import PrimeVue from 'primevue/config'
 import App from './App.vue'
 import router from './router'
 
-// PrimeVue CSS
+// PrimeVue CSS (v3 방식)
 import 'primevue/resources/themes/lara-light-blue/theme.css'
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
