@@ -1,10 +1,19 @@
-<!-- src/App.vue -->
 <template>
-  <RouterView />
+  <div id="app">
+    <router-view />
+  </div>
 </template>
 
 <script setup>
-import { RouterView } from 'vue-router'
+import { onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+
+onMounted(() => {
+  // 앱 시작 시 인증 상태 초기화
+  authStore.initAuth()
+})
 </script>
 
 <style>
@@ -15,10 +24,9 @@ import { RouterView } from 'vue-router'
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-  'Helvetica Neue', Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+  Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  background: #f5f5f5;
 }
 
 #app {

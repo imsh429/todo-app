@@ -1,41 +1,26 @@
 {
-  "name": "todo-web",
-  "version": "0.0.0",
+  "name": "tasksync-web",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": "^20.19.0 || >=22.12.0"
-  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@fullcalendar/core": "^6.1.19",
-    "@fullcalendar/daygrid": "^6.1.19",
-    "@fullcalendar/interaction": "^6.1.19",
-    "@fullcalendar/vue3": "^6.1.19",
-    "dayjs": "^1.11.19",
-    "firebase": "^12.6.0",
-    "pinia": "^3.0.4",
-    "primeicons": "^7.0.0",
-    "primevue": "^4.5.3",
-    "uuid": "^13.0.0",
-    "vue": "^3.5.25",
-    "vue-router": "^4.6.3"
+    "vue": "^3.4.0",
+    "vue-router": "^4.2.5",
+    "pinia": "^2.1.7",
+    "firebase": "^10.7.1",
+    "primevue": "^3.46.0",
+    "primeicons": "^6.0.1",
+    "@fullcalendar/vue3": "^6.1.10",
+    "@fullcalendar/daygrid": "^6.1.10",
+    "dayjs": "^1.11.10"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
-    "@vitejs/plugin-vue": "^6.0.2",
-    "@vue/eslint-config-prettier": "^10.2.0",
-    "eslint": "^9.39.1",
-    "eslint-plugin-vue": "~10.5.1",
-    "globals": "^16.5.0",
-    "prettier": "3.6.2",
-    "vite": "^7.2.4",
-    "vite-plugin-vue-devtools": "^8.0.5"
+    "@vitejs/plugin-vue": "^5.0.0",
+    "vite": "^5.0.8"
   }
 }
