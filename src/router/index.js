@@ -8,31 +8,33 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/LoginView.vue')
+      component: () => import('@/views/LoginView.vue'),
+      meta: { requiresGuest: true }
     },
     {
       path: '/',
       name: 'home',
       component: () => import('@/views/HomeView.vue'),
-      meta: { requiresAuth: true }  // 로그인 필요
+      meta: { requiresAuth: true }
     },
     {
       path: '/calendar',
       name: 'calendar',
       component: () => import('@/views/CalendarView.vue'),
-      meta: { requiresAuth: true }  // 로그인 필요
+      meta: { requiresAuth: true }
     }
   ]
 })
 
-// 라우터 가드 (로그인 체크)
+// 라우트 가드: 인증 체크
 router.beforeEach((to, from, next) => {
+  const currentUser = auth.currentUser
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const isAuthenticated = auth.currentUser
+  const requiresGuest = to.matched.some(record => record.meta.requiresGuest)
 
-  if (requiresAuth && !isAuthenticated) {
+  if (requiresAuth && !currentUser) {
     next('/login')
-  } else if (to.path === '/login' && isAuthenticated) {
+  } else if (requiresGuest && currentUser) {
     next('/')
   } else {
     next()
