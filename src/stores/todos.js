@@ -29,6 +29,27 @@ export const useTodoStore = defineStore('todos', () => {
     todos.value.filter(todo => !todo.completed)
   )
 
+  const completedTodos = computed(() =>
+    todos.value.filter(todo => todo.completed)
+  )
+
+  const stats = computed(() => ({
+    total: todos.value.length,
+    active: activeTodos.value.length,
+    completed: completedTodos.value.length,
+  }))
+
+  const todosByCategory = computed(() => {
+    const categories = {}
+    todos.value.forEach(todo => {
+      if (!categories[todo.category]) {
+        categories[todo.category] = []
+      }
+      categories[todo.category].push(todo)
+    })
+    return categories
+  })
+
   // Firestore 실시간 리스너 (Part 5에서 구현 예정)
   const subscribeTodos = (userId) => {
     const q = query(
