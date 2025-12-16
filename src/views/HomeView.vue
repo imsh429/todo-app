@@ -146,6 +146,11 @@ onMounted(() => {
   }
 })
 
+// 컴포넌트 언마운트 시 리스너 정지
+onUnmounted(() => {
+  todoStore.stopListener()
+})
+
 const handleLogout = async () => {
   if (confirm('로그아웃 하시겠습니까?')) {
     await authStore.signOut()
