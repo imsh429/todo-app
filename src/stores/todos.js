@@ -1,6 +1,6 @@
 // src/stores/todos.js
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import {
   collection,
   addDoc,
@@ -10,13 +10,20 @@ import {
   query,
   where,
   orderBy,
-  onSnapshot
+  onSnapshot,
+  Timestamp
 } from 'firebase/firestore'
 import { db } from '@/firebase/config'
+import { useAuthStore } from './auth'
 
 export const useTodoStore = defineStore('todos', () => {
   const todos = ref([])
   const loading = ref(false)
+  const error = ref(null)
+  const unsubscribe = ref(null)
+
+  // Getters
+  const allTodos = computed(() => todos.value)
 
   // Firestore 실시간 리스너 (Part 5에서 구현 예정)
   const subscribeTodos = (userId) => {
