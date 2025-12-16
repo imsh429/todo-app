@@ -74,13 +74,29 @@ export const useTodoStore = defineStore('todos', () => {
 
     loading.value = true
 
-    return onSnapshot(q, (snapshot) => {
-      todos.value = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }))
-    })
+    // 실시간 리스너 등록
+    unsubscribe.value = onSnapshot(
+      q,
+      (snapshot) => {
+        todos.value = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: doc.data().createdAt?.toDate(),
+          updatedAt: doc.data().updatedAt?.toDate(),
+          dueDate: doc.data().dueDate?.toDate(),
+        }))
+        loading.value = false
+        error.value = null
+      },
+      (err) => {
+        console.error('Error listening to todos:', err)
+        error.value = err.message
+        loading.value = false
+      }
+    )
   }
+
+
 
   // Todo 추가 (Part 5에서 구현 예정)
   const addTodo = async (todoData) => {
