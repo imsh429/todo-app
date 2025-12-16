@@ -1,6 +1,6 @@
 // src/firebase/config.js
 import { initializeApp } from 'firebase/app'
-import { getAuth, GoogleAuthProvider } from 'firebase/auth'
+import { getAuth, GoogleAuthProvider, setPersistence, browserLocalPersistence } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 
 // 환경변수에서 Firebase 설정 가져오기
@@ -20,3 +20,12 @@ const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 export const db = getFirestore(app)
 export const googleProvider = new GoogleAuthProvider()
+
+// 인증 상태 지속성 설정 (브라우저 닫아도 유지)
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+    console.log('✅ Auth persistence enabled')
+  })
+  .catch((error) => {
+    console.error('❌ Auth persistence error:', error)
+  })

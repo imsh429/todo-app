@@ -55,7 +55,7 @@
             <h1 class="page-title">오늘의 할일 ✨</h1>
             <p class="page-subtitle">생산적인 하루를 만들어가세요</p>
           </div>
-          <button class="add-btn" title="할일 추가">
+          <button class="add-btn" @click="openAddDialog" title="할일 추가">
             <i class="pi pi-plus"></i>
             <span>새 할일</span>
           </button>
@@ -69,7 +69,7 @@
             </div>
             <div class="stat-info">
               <p class="stat-label">전체</p>
-              <p class="stat-value">0</p>
+              <p class="stat-value">{{ todoStore.stats.total }}</p>
             </div>
           </div>
 
@@ -79,7 +79,7 @@
             </div>
             <div class="stat-info">
               <p class="stat-label">진행중</p>
-              <p class="stat-value">0</p>
+              <p class="stat-value">{{ todoStore.stats.active }}</p>
             </div>
           </div>
 
@@ -89,7 +89,7 @@
             </div>
             <div class="stat-info">
               <p class="stat-label">완료</p>
-              <p class="stat-value">0</p>
+              <p class="stat-value">{{ todoStore.stats.completed }}</p>
             </div>
           </div>
         </div>
@@ -99,38 +99,173 @@
           <div class="section-header">
             <h2 class="section-title">할일 목록</h2>
             <div class="filter-tabs">
-              <button class="tab-btn active">전체</button>
-              <button class="tab-btn">진행중</button>
-              <button class="tab-btn">완료</button>
+              <button
+                class="tab-btn"
+                :class="{ active: currentFilter === 'all' }"
+                @click="setFilter('all')"
+              >
+                전체
+              </button>
+              <button
+                class="tab-btn"
+                :class="{ active: currentFilter === 'active' }"
+                @click="setFilter('active')"
+              >
+                진행중
+              </button>
+              <button
+                class="tab-btn"
+                :class="{ active: currentFilter === 'completed' }"
+                @click="setFilter('completed')"
+              >
+                완료
+              </button>
             </div>
           </div>
 
           <!-- Empty State -->
-          <div class="empty-state">
+          <div v-if="showEmptyState" class="empty-state">
             <div class="empty-icon">
               <i class="pi pi-inbox"></i>
             </div>
-            <h3>아직 할일이 없습니다</h3>
+            <h3>
+              {{ currentFilter === 'all' ? '아직 할일이 없습니다' :
+              currentFilter === 'active' ? '진행중인 할일이 없습니다' :
+                '완료된 할일이 없습니다' }}
+            </h3>
             <p>새로운 할일을 추가하여 시작해보세요!</p>
-            <button class="empty-btn">
+            <button class="empty-btn" @click="openAddDialog">
               <i class="pi pi-plus"></i>
               첫 번째 할일 만들기
             </button>
           </div>
+
+          <!-- Todo 목록 -->
+          <div v-else class="todo-list">
+            <TodoItem
+              v-for="todo in filteredTodos"
+              :key="todo.id"
+              :todo="todo"
+              @edit="openEditDialog"
+              @delete="handleDeleteTodo"
+            />
+
+            <!-- 완료된 항목 삭제 버튼 -->
+            <div v-if="currentFilter === 'completed' && todoStore.completedTodos.length > 0" class="list-footer">
+              <button class="clear-btn" @click="clearCompleted">
+                <i class="pi pi-trash"></i>
+                완료된 항목 모두 삭제 ({{ todoStore.completedTodos.length }})
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </main>
+
+    <!-- Add Todo Dialog -->
+    <AddTodoDialog
+      :visible="showAddDialog"
+      @close="closeAddDialog"
+    />
+
+    <!-- Edit Todo Dialog -->
+    <EditTodoDialog
+      :visible="showEditDialog"
+      :todo="editingTodo"
+      @close="closeEditDialog"
+    />
   </div>
 </template>
 
 <script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useTodoStore } from '@/stores/todos'
+import AddTodoDialog from '@/components/AddTodoDialog.vue'
+import EditTodoDialog from '@/components/EditTodoDialog.vue'
+import TodoItem from '@/components/TodoItem.vue'
 
 const authStore = useAuthStore()
+const todoStore = useTodoStore()
+
+const showAddDialog = ref(false)
+const showEditDialog = ref(false)
+const editingTodo = ref(null)
+const currentFilter = ref('all') // 'all', 'active', 'completed'
+
+// 필터링된 Todo 목록
+const filteredTodos = computed(() => {
+  switch (currentFilter.value) {
+    case 'active':
+      return todoStore.activeTodos
+    case 'completed':
+      return todoStore.completedTodos
+    default:
+      return todoStore.allTodos
+  }
+})
+
+// Empty State 표시 여부
+const showEmptyState = computed(() => {
+  return filteredTodos.value.length === 0
+})
+
+// 컴포넌트 마운트 시 Todo 리스너 시작
+onMounted(() => {
+  if (authStore.user) {
+    todoStore.startListener()
+  }
+})
+
+// 컴포넌트 언마운트 시 리스너 정지
+onUnmounted(() => {
+  todoStore.stopListener()
+})
 
 const handleLogout = async () => {
   if (confirm('로그아웃 하시겠습니까?')) {
+    todoStore.stopListener()
     await authStore.signOut()
+  }
+}
+
+const openAddDialog = () => {
+  showAddDialog.value = true
+}
+
+const closeAddDialog = () => {
+  showAddDialog.value = false
+}
+
+const openEditDialog = (todo) => {
+  editingTodo.value = todo
+  showEditDialog.value = true
+}
+
+const closeEditDialog = () => {
+  showEditDialog.value = false
+  editingTodo.value = null
+}
+
+const handleDeleteTodo = async (todoId) => {
+  const result = await todoStore.deleteTodo(todoId)
+  if (!result.success) {
+    alert('삭제 실패: ' + result.error)
+  }
+}
+
+const setFilter = (filter) => {
+  currentFilter.value = filter
+}
+
+const clearCompleted = async () => {
+  if (todoStore.completedTodos.length === 0) return
+
+  if (confirm(`완료된 할일 ${todoStore.completedTodos.length}개를 삭제하시겠습니까?`)) {
+    const result = await todoStore.clearCompleted()
+    if (!result.success) {
+      alert('삭제 실패: ' + result.error)
+    }
   }
 }
 </script>
@@ -468,6 +603,63 @@ const handleLogout = async () => {
 .empty-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+}
+
+/* Todo 목록 */
+.todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.todo-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.todo-list::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 4px;
+}
+
+.todo-list::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.todo-list::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* 목록 하단 */
+.list-footer {
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+  margin-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.clear-btn {
+  padding: 12px 24px;
+  background: #fef2f2;
+  color: #dc2626;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.clear-btn:hover {
+  background: #fee2e2;
+  transform: translateY(-2px);
 }
 
 /* 반응형 */
