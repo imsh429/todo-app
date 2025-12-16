@@ -130,9 +130,21 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useTodoStore } from '@/stores/todos'
+import AddTodoDialog from '@/components/AddTodoDialog.vue'
 
 const authStore = useAuthStore()
+const todoStore = useTodoStore()
+const showAddDialog = ref(false)
+
+// 컴포넌트 마운트 시 Todo 리스너 시작
+onMounted(() => {
+  if (authStore.user) {
+    todoStore.startListener()
+  }
+})
 
 const handleLogout = async () => {
   if (confirm('로그아웃 하시겠습니까?')) {
