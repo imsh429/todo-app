@@ -158,6 +158,13 @@ const handleLogout = async () => {
   }
 }
 
+const openAddDialog = () => {
+  showAddDialog.value = true
+}
+
+const closeAddDialog = () => {
+  showAddDialog.value = false
+}
 </script>
 
 <style scoped>
