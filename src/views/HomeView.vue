@@ -153,9 +153,11 @@ onUnmounted(() => {
 
 const handleLogout = async () => {
   if (confirm('로그아웃 하시겠습니까?')) {
+    todoStore.stopListener()
     await authStore.signOut()
   }
 }
+
 </script>
 
 <style scoped>
