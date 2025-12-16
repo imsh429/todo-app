@@ -105,9 +105,33 @@ export const useTodoStore = defineStore('todos', () => {
     todos.value = []
   }
 
-  // Todo 추가 (Part 5에서 구현 예정)
+  // Todo 추가
   const addTodo = async (todoData) => {
-    // 구현 예정
+    const authStore = useAuthStore()
+
+    if (!authStore.user) {
+      throw new Error('User not authenticated')
+    }
+
+    try {
+      const newTodo = {
+        userId: authStore.user.uid,
+        title: todoData.title,
+        description: todoData.description || '',
+        category: todoData.category || '개인',
+        priority: todoData.priority || 'medium',
+        dueDate: todoData.dueDate ? Timestamp.fromDate(new Date(todoData.dueDate)) : null,
+        completed: false,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      }
+
+      await addDoc(collection(db, 'todos'), newTodo)
+      return { success: true }
+    } catch (err) {
+      console.error('Error adding todo:', err)
+      return { success: false, error: err.message }
+    }
   }
 
   // Todo 수정 (Part 5에서 구현 예정)
