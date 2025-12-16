@@ -96,7 +96,14 @@ export const useTodoStore = defineStore('todos', () => {
     )
   }
 
-
+  // 리스너 정지
+  const stopListener = () => {
+    if (unsubscribe.value) {
+      unsubscribe.value()
+      unsubscribe.value = null
+    }
+    todos.value = []
+  }
 
   // Todo 추가 (Part 5에서 구현 예정)
   const addTodo = async (todoData) => {
