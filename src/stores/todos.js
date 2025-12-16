@@ -134,9 +134,26 @@ export const useTodoStore = defineStore('todos', () => {
     }
   }
 
-  // Todo 수정 (Part 5에서 구현 예정)
+  // Todo 수정
   const updateTodo = async (todoId, updates) => {
-    // 구현 예정
+    try {
+      const todoRef = doc(db, 'todos', todoId)
+      const updateData = {
+        ...updates,
+        updatedAt: Timestamp.now(),
+      }
+
+      // dueDate가 있으면 Timestamp로 변환
+      if (updates.dueDate) {
+        updateData.dueDate = Timestamp.fromDate(new Date(updates.dueDate))
+      }
+
+      await updateDoc(todoRef, updateData)
+      return { success: true }
+    } catch (err) {
+      console.error('Error updating todo:', err)
+      return { success: false, error: err.message }
+    }
   }
 
   // Todo 삭제 (Part 5에서 구현 예정)
