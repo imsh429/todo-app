@@ -50,13 +50,19 @@ export const useTodoStore = defineStore('todos', () => {
     return categories
   })
 
-  // Firestore 실시간 리스너 (Part 5에서 구현 예정)
-  const subscribeTodos = (userId) => {
-    const q = query(
-      collection(db, 'todos'),
-      where('userId', '==', userId),
-      orderBy('createdAt', 'desc')
-    )
+  // Firestore 실시간 리스너 시작
+  const startListener = () => {
+    const authStore = useAuthStore()
+
+    if (!authStore.user) {
+      console.log('User not logged in')
+      return
+    }
+
+    // 이미 리스너가 있으면 정리
+    if (unsubscribe.value) {
+      unsubscribe.value()
+    }
 
     return onSnapshot(q, (snapshot) => {
       todos.value = snapshot.docs.map(doc => ({
