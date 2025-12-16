@@ -196,12 +196,26 @@ export const useTodoStore = defineStore('todos', () => {
   }
 
   return {
+    // State
     todos,
     loading,
-    subscribeTodos,
+    error,
+
+    // Getters
+    allTodos,
+    activeTodos,
+    completedTodos,
+    stats,
+    todosByCategory,
+
+    // Actions
+    startListener,
+    stopListener,
     addTodo,
     updateTodo,
     deleteTodo,
-    toggleComplete
+    toggleComplete,
+    deleteMultipleTodos,
+    clearCompleted,
   }
 })
