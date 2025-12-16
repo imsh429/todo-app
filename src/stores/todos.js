@@ -156,9 +156,15 @@ export const useTodoStore = defineStore('todos', () => {
     }
   }
 
-  // Todo 삭제 (Part 5에서 구현 예정)
+  // Todo 삭제
   const deleteTodo = async (todoId) => {
-    // 구현 예정
+    try {
+      await deleteDoc(doc(db, 'todos', todoId))
+      return { success: true }
+    } catch (err) {
+      console.error('Error deleting todo:', err)
+      return { success: false, error: err.message }
+    }
   }
 
   // Todo 완료 토글 (Part 5에서 구현 예정)
