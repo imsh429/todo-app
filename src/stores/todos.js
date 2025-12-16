@@ -64,6 +64,16 @@ export const useTodoStore = defineStore('todos', () => {
       unsubscribe.value()
     }
 
+    const userId = authStore.user.uid
+    const todosRef = collection(db, 'todos')
+    const q = query(
+      todosRef,
+      where('userId', '==', userId),
+      orderBy('createdAt', 'desc')
+    )
+
+    loading.value = true
+
     return onSnapshot(q, (snapshot) => {
       todos.value = snapshot.docs.map(doc => ({
         id: doc.id,
