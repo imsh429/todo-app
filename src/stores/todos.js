@@ -177,6 +177,18 @@ export const useTodoStore = defineStore('todos', () => {
     })
   }
 
+  // 여러 Todo 삭제
+  const deleteMultipleTodos = async (todoIds) => {
+    try {
+      const promises = todoIds.map(id => deleteTodo(id))
+      await Promise.all(promises)
+      return { success: true }
+    } catch (err) {
+      console.error('Error deleting multiple todos:', err)
+      return { success: false, error: err.message }
+    }
+  }
+
   return {
     todos,
     loading,
