@@ -25,6 +25,10 @@ export const useTodoStore = defineStore('todos', () => {
   // Getters
   const allTodos = computed(() => todos.value)
 
+  const activeTodos = computed(() =>
+    todos.value.filter(todo => !todo.completed)
+  )
+
   // Firestore 실시간 리스너 (Part 5에서 구현 예정)
   const subscribeTodos = (userId) => {
     const q = query(
