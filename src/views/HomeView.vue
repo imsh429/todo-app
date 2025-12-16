@@ -55,7 +55,7 @@
             <h1 class="page-title">오늘의 할일 ✨</h1>
             <p class="page-subtitle">생산적인 하루를 만들어가세요</p>
           </div>
-          <button class="add-btn" title="할일 추가">
+          <button class="add-btn" @click="openAddDialog" title="할일 추가">
             <i class="pi pi-plus"></i>
             <span>새 할일</span>
           </button>
@@ -69,7 +69,7 @@
             </div>
             <div class="stat-info">
               <p class="stat-label">전체</p>
-              <p class="stat-value">0</p>
+              <p class="stat-value">{{ todoStore.stats.total }}</p>
             </div>
           </div>
 
@@ -79,7 +79,7 @@
             </div>
             <div class="stat-info">
               <p class="stat-label">진행중</p>
-              <p class="stat-value">0</p>
+              <p class="stat-value">{{ todoStore.stats.active }}</p>
             </div>
           </div>
 
@@ -89,7 +89,7 @@
             </div>
             <div class="stat-info">
               <p class="stat-label">완료</p>
-              <p class="stat-value">0</p>
+              <p class="stat-value">{{ todoStore.stats.completed }}</p>
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@
             </div>
             <h3>아직 할일이 없습니다</h3>
             <p>새로운 할일을 추가하여 시작해보세요!</p>
-            <button class="empty-btn">
+            <button class="empty-btn" @click="openAddDialog">
               <i class="pi pi-plus"></i>
               첫 번째 할일 만들기
             </button>
@@ -120,6 +120,12 @@
         </div>
       </div>
     </main>
+
+    <!-- Add Todo Dialog -->
+    <AddTodoDialog
+      :visible="showAddDialog"
+      @close="closeAddDialog"
+    />
   </div>
 </template>
 
