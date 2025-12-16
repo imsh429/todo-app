@@ -167,9 +167,14 @@ export const useTodoStore = defineStore('todos', () => {
     }
   }
 
-  // Todo 완료 토글 (Part 5에서 구현 예정)
-  const toggleComplete = async (todoId, completed) => {
-    // 구현 예정
+  // Todo 완료 토글
+  const toggleComplete = async (todoId) => {
+    const todo = todos.value.find(t => t.id === todoId)
+    if (!todo) return
+
+    return await updateTodo(todoId, {
+      completed: !todo.completed
+    })
   }
 
   return {
