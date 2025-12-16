@@ -189,6 +189,12 @@ export const useTodoStore = defineStore('todos', () => {
     }
   }
 
+  // 완료된 모든 Todo 삭제
+  const clearCompleted = async () => {
+    const completedIds = completedTodos.value.map(todo => todo.id)
+    return await deleteMultipleTodos(completedIds)
+  }
+
   return {
     todos,
     loading,
